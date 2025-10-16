@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	{{ parent() }}
+	- Frikyland
+{% endblock %}
+
+{% block body %}
+	{{ parent() }}
+	<br>
+
+	<a href="#" class="btn btn-primary" id="btn-nuevo-post">Nuevo Post</a>
+
+	<div id="formulario-post" style="display: none; margin-top: 20px;">
+		<h3>Crear nueva publicación</h3>
+		{{ form_start(form) }}
+		{{ form_widget(form) }}
+		<button class="btn btn-success mt-2">Guardar</button>
+		<button type="button" class="btn btn-secondary mt-2" id="btn-cancelar">Cancelar</button>
+		{{ form_end(form) }}
+	</div>
+
+	<div class="posts-container">
+		{% for post in posts %}
+			<article class="post-card">
+				<div class="post-info">
+					<h2 class="post-title">{{ post.title }}</h2>
+					<p class="post-date">{{ post.creation_date|date('d/m/Y') }}</p>
+					<p class="post-content">{{ post.description }}</p>
+					<a href="{{ path('postDetails', {id: post.id}) }}" class="read-more">Leer más →</a>
+				</div>
+				{% if post.file %}
+					<img src="{{ asset('uploads/files/' ~ post.file) }}" alt="{{ post.title }}" class="post-image">
+				{% endif %}
+			</article>
+		{% endfor %}
+
+		{# display navigation #}
+		<div class="navigation">
+			{{ knp_pagination_render(posts) }}
+		</div>
+	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+const btnNuevo = document.getElementById('btn-nuevo-post');
+const formPost = document.getElementById('formulario-post');
+const btnCancelar = document.getElementById('btn-cancelar');
+
+btnNuevo.addEventListener('click', e => {
+e.preventDefault();
+formPost.style.display = 'block';
+btnNuevo.style.display = 'none';
+});
+
+btnCancelar.addEventListener('click', () => {
+formPost.style.display = 'none';
+btnNuevo.style.display = 'inline-block';
+});
+});
+	</script>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+    <script src="{{ asset('js/ajax-call.js') }}"></script>
+{% endblock %}
+
+
